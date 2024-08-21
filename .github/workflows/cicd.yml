@@ -49,7 +49,8 @@ jobs:
     - name: Deploy the app with Docker
       run: |
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-        cd /root/python-gigachat-bot/
-        sudo docker build -t python-gigachat-bot .
-        sudo docker run -p 8501:8501 python-gigachat-bot
+        cd /${{ secrets.SSH_USER }}/python-gigachat-bot/
+        docker build -t python-gigachat-bot .
+        docker create --name python-gigachat-bot -p 8501:8501
+        docker start python-gigachat-bot
         EOF
