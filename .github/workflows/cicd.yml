@@ -43,12 +43,13 @@ jobs:
 
     - name: Git clone repo
       run: |
-        sudo git clone https://github.com/MaksoN007PRO/python-gigachat-bot /root/python-gigachat-bot
+        mkdir python-gigachat-bot
+        cd python-gigachat-bot || git clone https://github.com/MaksoN007PRO/python-gigachat-bot.git
 
     - name: Deploy the app with Docker
       run: |
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-        sudo cd /root/python-gigachat-bot/
+        cd /root/python-gigachat-bot/
         sudo docker build -t python-gigachat-bot .
         sudo docker run -p 8501:8501 python-gigachat-bot
         EOF
