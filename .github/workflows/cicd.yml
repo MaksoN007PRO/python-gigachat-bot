@@ -41,14 +41,14 @@ jobs:
         EOF
 
 
-    - name: Copy files to remote server
+    - name: Git clone repo
       run: |
-        scp -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/app/
+        git clone https://github.com/MaksoN007PRO/python-gigachat-bot
 
     - name: Deploy the app with Docker
       run: |
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-        cd /home/${{ secrets.SSH_USER }}/app/
+        cd /home/${{ secrets.SSH_USER }}/python-gigachat-bot/
         sudo docker build -t python-gigachat-bot .
         sudo docker run -p 8501:8501 python-gigachat-bot
         EOF
