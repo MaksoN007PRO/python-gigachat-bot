@@ -55,7 +55,7 @@ jobs:
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
         cd /${{ secrets.SSH_USER }}/python-gigachat-bot/.streamlit/
         sed -i 's/CLIENT_ID = ""/CLIENT_ID = "${{ secrets.SECRET_CLIENT_ID }}"/' secrets.toml
-        sed -i 's/SECRET = ""/SECRET = "${{ secrets.SECRET_SECRET }}"/' secrets.toml
+        sed -i 's/SECRET = ""/SECRET = "${{ secrets.CLIENT_SECRET }}"/' secrets.toml
         EOF
 
     - name: Deploy the app with Docker
