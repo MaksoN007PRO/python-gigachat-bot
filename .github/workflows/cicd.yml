@@ -43,8 +43,7 @@ jobs:
 
     - name: Git clone repo
       run: |
-        sudo cd /root
-        git clone https://github.com/MaksoN007PRO/python-gigachat-bot
+        sudo git clone https://github.com/MaksoN007PRO/python-gigachat-bot /root/python-gigachat-bot
 
     - name: Deploy the app with Docker
       run: |
