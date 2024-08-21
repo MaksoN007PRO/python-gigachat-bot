@@ -43,8 +43,8 @@ jobs:
 
     - name: Git clone repo
       run: |
-        mkdir python-gigachat-bot
-        cd python-gigachat-bot || git clone https://github.com/MaksoN007PRO/python-gigachat-bot.git
+        ssh -o StrictHostKeyChecking=no -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        git clone https://github.com/MaksoN007PRO/python-gigachat-bot.git
 
     - name: Deploy the app with Docker
       run: |
