@@ -1,14 +1,53 @@
-name: Demo Workflow
+name: Deploy to Remote Server
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    branches:
+      - main  # Замените на вашу основную ветку
 
 jobs:
-  print:
-    runs-on: ubuntu-latest 
+  deploy:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Print to console
-        run: echo Hello GH Actions!
-      - name: Print a few lines
-        run: |
-          echo First line!
-          echo Second Line!
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Install Docker on remote server
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        # Update the apt package index and install packages to allow apt to use a repository over HTTPS
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+        # Add Docker’s official GPG key
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+        # Set up the stable repository
+        sudo add-apt-repository \
+          "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+        # Install Docker
+        sudo apt-get update
+        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+        # Add user to the docker group
+        sudo usermod -aG docker $USER
+        EOF
+
+    - name: Copy files to remote server
+      run: |
+        scp -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/app/
+
+    - name: Deploy the app with Docker
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        cd /home/${{ secrets.SSH_USER }}/app/
+        sudo docker build -t python-gigachat-bot .
+        sudo docker run -p 8501:8501 python-gigachat-bot
+        EOF
