@@ -42,6 +42,7 @@ jobs:
 
     - name: Clean repository directory
       run: |
+        ssh -o StrictHostKeyChecking=no -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
         rm -rf /${{ secrets.SSH_USER }}/python-gigachat-bot/
 
     - name: Git clone repo
@@ -52,22 +53,21 @@ jobs:
     - name: Deploy the app with Docker
       run: |
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          # Переходим в директорию с проектом
-          cd /${{ secrets.SSH_USER }}/python-gigachat-bot/
+        cd /${{ secrets.SSH_USER }}/python-gigachat-bot/
     
-          if [ $(docker ps -q -f name=python-gigachat-bot) ]; then
-            echo "Container is running, stopping it..."
-            docker stop python-gigachat-bot
-            docker rm python-gigachat-bot
-          elif [ $(docker ps -a -q -f name=python-gigachat-bot) ]; then
-            echo "Container exists but not running, removing it..."
-            docker rm python-gigachat-bot
-          else
-            echo "Container does not exist, proceeding..."
-          fi
+        if [ $(docker ps -q -f name=python-gigachat-bot) ]; then
+          echo "Container is running, stopping it..."
+          docker stop python-gigachat-bot
+          docker rm python-gigachat-bot
+        elif [ $(docker ps -a -q -f name=python-gigachat-bot) ]; then
+          echo "Container exists but not running, removing it..."
+          docker rm python-gigachat-bot
+        else
+          echo "Container does not exist, proceeding..."
+        fi
     
-          docker build -t python-gigachat-bot .
-          docker create --name python-gigachat-bot -p 8501:8501 python-gigachat-bot
-          docker start python-gigachat-bot
-        EOF
+        docker build -t python-gigachat-bot .
+        docker create --name python-gigachat-bot -p 8501:8501 python-gigachat-bot
+        docker start python-gigachat-bot
+      EOF
 
