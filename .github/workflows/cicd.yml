@@ -69,5 +69,5 @@ jobs:
         docker build -t python-gigachat-bot .
         docker create --name python-gigachat-bot -p 8501:8501 python-gigachat-bot
         docker start python-gigachat-bot
-      EOF
+        EOF
 
