@@ -2,6 +2,13 @@ import streamlit as st
 
 from gigachat_api import get_access_token, send_prompt, sent_prompt_and_get_response
 
+st.set_page_config(
+    page_title="GigaChat AI",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+    )
+
 st.title("GigaChat-Pro")
 
 if "access_token" not in st.session_state:
